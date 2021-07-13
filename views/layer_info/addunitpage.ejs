@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="/javascripts/jquery-3.4.1.js"></script>
+<style type="text/css">
+body {
+  background-color: #d6d6d3;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+     flex-direction:column;
+	 justify-content: flex-start;
+     align-items:center;
+  	margin: 0;
+}
+.navbar{background:#f97300;}
+.nav-link, .navbar-brand{color: #f4f4f4;cursor:pointer;}
+.nav-link{margin-right:1em !important;}
+.nav-link:hover{background: #f4f4f4;color:#f97300;}
+.navbar-collapse{justify-content:flex-end;}
+.navbar-toggler{background:#fff !important;}
+</style>
+
+  <title>補各欄位計數單位頁</title>
+  </head>
+  <body>
+    <div id="show_div">
+      <bander></bander>
+        <!-- <inputer></inputer> -->
+        <outputer></outputer>
+    </div>
+ 
+    <template id="banderUI">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">{{brand}}</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/">{{home}} <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">{{often1}}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">{{often2}}</a>
+            </li>
+          </ul>
+          <span class="navbar-text">
+            {{statusreport}}
+          </span>
+        </div>
+      </nav>
+    </template>
+    
+   <!--  <template id="inputerUI">
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{card_title}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+          <form>
+            <div class="form-group">
+              <label for="formGroupExampleInput">Example label</label>
+              <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+            </div>
+            <div class="form-group">
+              <label for="formGroupExampleInput2">Another label</label>
+              <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
+            </div>
+          </form>
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div> 
+      <br> 
+    </template>-->
+
+    <template id="outputerUI">
+      <nav aria-label="...">
+        <ul class="pagination">
+          <li class="page-item disabled">
+            <span class="page-link">Previous</span>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item active">
+            <span class="page-link">
+              2
+              <span class="sr-only">(current)</span>
+            </span>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+        <span><h3>資料批次名稱: {{layer_info_list[0].a10dataset_name}}</h3></span>    
+      <table border="1" class="table table-striped">
+          <thead>
+          <tr>
+              <th>在json層次</th>
+              <th>上層欄位名稱</th>
+              <th>欄位名稱</th>
+              <th>容器欄位數</th>              
+              <th>資料計數單位</th>
+            <!-- <th>特別註記</th> -->
+          </tr>
+          </thead>
+          <tbody id="layer_infopages">
+            <tr v-for="layer_info of layer_info_list">
+              <td>{{layer_info.a15data_layer}}</td>
+              <td>{{layer_info.a40upper_key}}</td>
+              <td>{{layer_info.a20key_name}}</td>
+              <td>{{layer_info.a30no_container}}</td>
+              <td>
+                <input type="text" name="a45unit" class="form-control" id="formGroupExampleInput1" v-model:value="layer_info.a45unit">
+                
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>{{outcome}}</td>
+              <td>
+                <input type="submit" value="送出欄位計數去儲存" @click="sendunit()">
+                <!-- <form action="/api/layer_info/addunit" method="get"></form>
+                <input type="hidden" name="statusreport" value="由補各欄位計數單位頁進入本頁">
+                <input type="submit" value="送出各欄位計數單位">
+                </form> -->
+
+              </td>  
+            </tr>
+          </tbody>
+      </table>
+    </nav>
+    </template>
+<!-- main.js import vue, axios, and vue-axios 
+<script type="module" src="/javascripts/main.js"></script>-->
+<!--CDN of vue, axiox, and vue-axios-->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
+<script>
+Vue.component("bander",{
+    props:{},
+    data(){
+      return {
+        brand:"北冥系統",
+        home:"回主功能選單",
+        often1:"備用頁",
+        often2:"備用頁",
+        often3:"備用頁",
+        statusreport:'<%- JSON.stringify(statusreport) %>'
+      }
+    },
+    methods:{
+
+    },
+    template:"#banderUI"
+  });
+  /* Vue.component("inputer",{
+    props:{},
+    data(){
+      return {
+        card_title:"單筆ＸＸＸ資料輸入處",
+        card_subtitle:"請輸入以下各項資料"
+        
+      } 
+    },
+    methods:{
+
+    },
+    template:"#inputerUI"
+  }); */
+  Vue.component("outputer",{
+    props:{},
+    data(){
+      return{
+        layer_info_list:JSON.parse(decodeURIComponent('<%=layer_info_list%>')),
+        outcome:""
+      }
+      
+    },
+    methods:{
+      sendunit:function(){
+        /* for(let layer_info of this.layer_info_list){          
+          console.log("the added unit for "+layer_info.a20key_name+" is:"+layer_info.a45unit)
+        } */
+        const apiurl='/api/layer_info/addunit';
+        let data={
+          statusreport:"由補各欄位計數單位頁進入本頁",
+          layer_info_list:this.layer_info_list
+        };
+        //let data=Qs.stringify(testdata2);
+        axios.post(apiurl,data).then((resByapi)=>{
+          let outcome=resByapi.data.outcome
+        });
+      }//EOF sendunit
+    },//EOF methods
+    template:"#outputerUI"
+  });
+    new Vue({
+        el:'#show_div',
+        data:{
+          testdata:'有執行到此。。。。'
+        },
+        /* computed:{
+
+        },
+        watch:{
+
+        },
+        filters:{
+
+        },
+        mixins:[
+
+        ],
+        template:" ",
+        components:{
+
+        },*/
+        beforeCreate:function(){
+          console.log("before create...")
+        },created:function(){
+          console.log("created...")
+        },
+        beforeMount:function(){
+          console.log("before mount...")
+        },
+        mounted:function(){
+          console.log("mounted...")
+        },
+        beforeUpdate:function(){
+          console.log("before update...")
+        },
+        updated:function(){
+          console.log("updated...")
+        },
+        beforeDestroy:function(){
+
+        } 
+    })
+</script>
+
+
+  </body>
+</html>

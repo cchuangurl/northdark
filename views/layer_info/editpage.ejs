@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="/javascripts/jquery-3.4.1.js"></script>
+<style type="text/css">
+body {
+  background-color: #d6d6d3;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+     flex-direction:column;
+	 justify-content: flex-start;
+     align-items:center;
+  	margin: 0;
+}
+.navbar{background:#f97300;}
+.nav-link, .navbar-brand{color: #f4f4f4;cursor:pointer;}
+.nav-link{margin-right:1em !important;}
+.nav-link:hover{background: #f4f4f4;color:#f97300;}
+.navbar-collapse{justify-content:flex-end;}
+.navbar-toggler{background:#fff !important;}
+</style>
+
+  <title>修正指定之layer_info</title>
+  </head>
+  <body>
+    <div id="show_div">
+      <bander></bander>
+        <inputer></inputer>        
+    </div>
+ 
+    <template id="banderUI">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">{{brand}}</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">{{home}} <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="#">{{often1}}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">{{often2}}</a>
+            </li>
+          </ul>
+          <span class="navbar-text">
+            提示：{{statusreport}}
+          </span>
+        </div>
+      </nav>
+    </template>
+    
+    <template id="inputerUI">
+      <div class="card" style="width: 36rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{card_title}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{card_subtitle}}</h6>
+          <form action="/api/layer_info/update/:id" method="post">
+            <div class="form-group">
+              
+            
+              <label for="formGroupExampleInput2">{{items.item1}}</label>
+              <input type="text" name="a10dataset_name" class="form-control" id="formGroupExampleInput1" :value="values.value1">
+           
+              <label for="formGroupExampleInput2">{{items.item2}}</label>
+              <input type="text" name="a15data_layer" class="form-control" id="formGroupExampleInput2" :value="values.value2">
+            
+              <label for="formGroupExampleInput2">{{items.item3}}</label>
+              <input type="text" name="a20key_name" class="form-control" id="formGroupExampleInput3" :value="values.value3">
+            
+              <label for="formGroupExampleInput2">{{items.item4}}</label>
+              <input type="text" name="a25no_subkey" class="form-control" id="formGroupExampleInput4" :value="values.value4">
+           
+              <label for="formGroupExampleInput2">{{items.item5}}</label>
+              <input type="text" name="a30no_container" class="form-control" id="formGroupExampleInput5" :value="values.value5">
+            
+              <label for="formGroupExampleInput2">{{items.item6}}</label>
+              <input type="text" name="a45unit" class="form-control" id="formGroupExampleInput6" :value="values.value6">
+            
+              <label for="formGroupExampleInput2">{{items.item7}}</label>
+              <input type="text" name="a99footnote" class="form-control" id="formGroupExampleInput7" :value="values.value7">
+                        
+              <input type="hidden" name="statusreport" class="form-control" id="msg1" value="由單筆修正頁輸入後進入本頁">
+            
+              <input type="submit" id="button1" value="確定送出" class="btn btn-info">
+            </div>
+          </form>
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div> 
+    </template>
+
+<!-- Vue CDN-->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script>
+Vue.component("bander",{
+    
+    data(){
+      return {
+        brand:"北冥系統",
+        home:"回主功能選單",
+        often1:"備用頁",
+        often2:"備用頁",
+        often3:"備用頁",
+        statusreport:'<%= JSON.stringify(statusreport) %>'
+      }
+    },
+    
+    template:"#banderUI"
+  });
+  Vue.component("inputer",{
+    
+    data(){
+      return {
+        card_title:"修正指定之layer_info",
+        card_subtitle:"請修正以下某些項之資料:",
+        items:{
+        item1:"批次名稱",
+        item2:"資料所在層",
+        item3:"欄位名稱",
+        item4:"本層鍵數",
+        item5:"容器鍵數",
+        item6:"計數單位",
+        item7:"特別註記"      
+      },
+      layer_info:JSON.parse(decodeURIComponent('<%=layer_info%>')),
+      values:{
+        vaule1:layer_info.a10dataset,
+        vaule2:layer_info.a15data_layer,
+        vaule3:layer_info.a20key_name,
+        vaule4:layer_info.a25no_subkey,
+        vaule5:layer_info.a30no_container,
+        vaule6:layer_info.a45unit,
+        vaule7:layer_info.a99footnote,
+      }
+     } 
+    },
+    
+    template:"#inputerUI"
+  });
+  
+    new Vue({
+        el:'#show_div',
+        data:{
+          testdata:'有執行到此。。。。'
+        },
+        /* computed:{
+
+        },
+        watch:{
+
+        },
+        filters:{
+
+        },
+        mixins:[
+
+        ],
+        template:" ",
+        components:{
+
+        },*/
+        beforeCreate:function(){
+          console.log("before create...")
+        },created:function(){
+          console.log("created...")
+        },
+        beforeMount:function(){
+          console.log("before mount...")
+        },
+        mounted:function(){
+          console.log("mounted...")
+        },
+        beforeUpdate:function(){
+          console.log("before update...")
+        },
+        updated:function(){
+          console.log("updated...")
+        },
+        beforeDestroy:function(){
+
+        } 
+    })
+</script>
+
+
+  </body>
+</html>

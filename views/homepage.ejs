@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="/javascripts/jquery-3.4.1.js"></script>
+<style type="text/css">
+body {
+  background-color: #d6d6d3;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+     flex-direction:column;
+	 justify-content: flex-start;
+     align-items:center;
+  	margin: 0;
+}
+</style>
+    <title>開放資料運用功能選單</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+      <br>
+   <h2>請點選主功能選項</h2>
+        <table class="menu">
+        <tr height="60px">
+        <td width="300px">
+        <form  action="/api/set_info/inputpage" method="get">
+        <input type="hidden" name="statusreport" value="由功能目錄頁輸入批次資料資訊按鈕進入本頁">
+        <input type="submit" value="輸入批次資料資訊" class="btn btn-info">        
+        </form>      
+        </td>
+        <td  width="300px">
+          <form  action="/api/set_info" method="get">
+            <input type="hidden" name="statusreport" value="由功能目錄頁列出批次資料清單按鈕進入本頁">
+            <input type="submit" value="列出批次資料清單" class="btn btn-info">        
+            </form> 
+        </td>
+      </tr>
+      <tr height="60px">
+        <td width="300px">
+        <form  action="/api/layer_info/inputpage" method="get">
+        <input type="hidden" name="statusreport" value="由功能目錄頁輸入資料欄按鈕進入本頁">
+        <input type="submit" value="輸入資料欄資訊" class="btn btn-info">        
+        </form>      
+        </td>
+        <td  width="300px">
+          <form  action="/api/layer_info" method="get">
+            <input type="hidden" name="statusreport" value="由功能目錄頁列出資料層清單按鈕進入本頁">
+            <input type="submit" value="列出資料層清單" class="btn btn-info">        
+            </form> 
+        </td>
+      </tr>  
+      <tr>
+        <td  width="300px">
+                  <form  action="/api/dictionary/inputpage" method="get">
+              <input type="hidden" name="statusreport" value="由功能目錄頁輸入字典資訊按鈕進入本頁">
+              <input type="submit" value="輸入字典資訊" class="btn btn-info">        
+              </form>
+        </td>
+        <td  width="300px">
+          <form  action="/api/dictionary/" method="get">
+            <input type="hidden" name="statusreport" value="由功能目錄頁列出字典清單按鈕進入本頁">
+            <input type="submit" value="列出字典清單" class="btn btn-info">        
+            </form> 
+        </td>
+        </tr>
+        <tr>
+          <td  width="300px">
+                    <form  action="/api/set_info/testblock" method="get">
+                <input type="submit" value="測試片斷程式" class="btn btn-info">        
+                </form>
+          </td>
+          <td  width="300px">
+            <form  action="#" method="get">
+              <input type="submit" value="備用連結" class="btn btn-info">        
+              </form> 
+          </td>
+          </tr>
+        </table>
+        </fieldset>
+  </body>
+</html>

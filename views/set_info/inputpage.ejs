@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="/javascripts/jquery-3.4.1.js"></script>
+<style type="text/css">
+body {
+  background-color: #d6d6d3;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+     flex-direction:column;
+	 justify-content: flex-start;
+     align-items:center;
+  	margin: 0;
+}
+.navbar{background:#f97300;}
+.nav-link, .navbar-brand{color: #f4f4f4;cursor:pointer;}
+.nav-link{margin-right:1em !important;}
+.nav-link:hover{background: #f4f4f4;color:#f97300;}
+.navbar-collapse{justify-content:flex-end;}
+.navbar-toggler{background:#fff !important;}
+</style>
+
+  <title>資料批次metadata</title>
+  </head>
+  <body>
+    <div id="show_div">
+      <bander></bander>
+        <inputer></inputer>        
+    </div>
+ 
+    <template id="banderUI">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">{{brand}}</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">{{home}} <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="#">{{often1}}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">{{often2}}</a>
+            </li>
+          </ul>
+          <span class="navbar-text">
+            提示：{{statusreport}}
+          </span>
+        </div>
+      </nav>
+    </template>
+    
+    <template id="inputerUI">
+      <div class="card" style="width: 36rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{card_title}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{card_subtitle}}</h6>
+          <form action="/api/set_info/" method="post">
+            <div class="form-group">              
+            
+              <label for="formGroupExampleInput2">{{items.item1}}</label>
+              <input type="text" name="a05web_path" class="form-control" id="formGroupExampleInput0" :placeholder="holders.holder0">
+
+              <label for="formGroupExampleInput2">{{items.item1}}</label>
+              <input type="text" name="a08UnitId" class="form-control" id="formGroupExampleInput1" :placeholder="holders.holder1">
+           
+              <label for="formGroupExampleInput2">{{items.item2}}</label>
+              <input type="text" name="a10data_volume" class="form-control" id="formGroupExampleInput2" :placeholder="holders.holder2">
+            
+              <label for="formGroupExampleInput2">{{items.item3}}</label>
+              <input type="text" name="a15skip" class="form-control" id="formGroupExampleInput3" :placeholder="holders.holder3">
+            
+              <label for="formGroupExampleInput2">{{items.item4}}</label>
+              <input type="text" name="a20filter" class="form-control" id="formGroupExampleInput4" :placeholder="holders.holder4">
+           
+              <label for="formGroupExampleInput2">{{items.item5}}</label>
+              <input type="text" name="a25order" class="form-control" id="formGroupExampleInput5" :placeholder="holders.holder5">
+            
+              <label for="formGroupExampleInput2">{{items.item6}}</label>
+              <input type="text" name="a30dataset_name" class="form-control" id="formGroupExampleInput6" :placeholder="holders.holder6">
+            
+              <label for="formGroupExampleInput2">{{items.item7}}</label>
+              <input type="text" name="a35describe" class="form-control" id="formGroupExampleInput7" :placeholder="holders.holder7">
+            
+              <label for="formGroupExampleInput2">{{items.item8}}</label>
+              <input type="text" name="a40date_of_get" class="form-control" id="formGroupExampleInput8" :placeholder="holders.holder8">
+            
+              <label for="formGroupExampleInput2">{{items.item9}}</label>
+              <input type="text" name="a45filename_part" class="form-control" id="formGroupExampleInput9" :placeholder="holders.holder9">
+           
+              <label for="formGroupExampleInput2">{{items.item10}}</label>
+              <input type="text" name="a50preventer" class="form-control" id="formGroupExampleInput10" :placeholder="holders.holder10">
+
+              <label for="formGroupExampleInput">{{items.item11}}</label>
+              <input type="text" name="a99footnote" class="form-control" id="formGroupExampleInput11" :placeholder="holders.holder11">
+            
+              <input type="hidden" name="statusreport" class="form-control" id="msg1" value="由單筆metadata輸入後進入本頁">
+            
+              <input type="submit" id="button1" value="確定送出" class="btn btn-info">
+            </div>
+          </form>
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div> 
+    </template>
+
+<!-- Vue CDN-->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script>
+Vue.component("bander",{
+    
+    data(){
+      return {
+        brand:"北冥系統",
+        home:"回主功能選單",
+        often1:"手動新增1筆",
+        often2:"備用頁",
+        often3:"備用頁",
+        statusreport:'<%= JSON.stringify(statusreport) %>'
+      }
+    },
+    
+    template:"#banderUI"
+  });
+  Vue.component("inputer",{
+    
+    data(){
+      return {
+        card_title:"資料批次metadata",
+        card_subtitle:"請輸入以下各項資料:",
+        items:{
+        item0:"資源網址",
+        item1:"UnitId",
+        item2:"擷取筆數",
+        item3:"跳過筆數",
+        item4:"查詢條件",
+        item5:"排序方式",
+        item6:"批次簡稱",
+        item7:"資料描述",
+        item8:"擷取日期",
+        item9:"檔名字母",
+        item10:"檔名序",
+        item11:"特別註記"      
+      },
+      holders:{
+        holder0:"資料所在網址(含資料組編號)",
+        holder1:"農業資料統一編號",
+        holder2:"本批次擷取筆數(預設為2,000筆)",
+        holder3:"(即過去已擷取之筆數, 預設為0筆)",
+        holder4:"(含起始日期、結束日期、所需欄位、符合之標準等)",
+        holder5:"(欄位名稱及排序方向)",
+        holder6:"此批次資料簡稱",
+        holder7:"資料描述",
+        holder8:"yyyy/mm/dd",
+        holder9:"檔名主要字母",
+        holder10:"同檔名時之序號",
+        holder11:"任何特別註記"
+      }
+      } 
+    },
+    
+    template:"#inputerUI"
+  });
+  
+    new Vue({
+        el:'#show_div',
+        data:{
+          testdata:'有執行到此。。。。'
+        },
+        /* computed:{
+
+        },
+        watch:{
+
+        },
+        filters:{
+
+        },
+        mixins:[
+
+        ],
+        template:" ",
+        components:{
+
+        },*/
+        beforeCreate:function(){
+          console.log("before create...")
+        },created:function(){
+          console.log("created...")
+        },
+        beforeMount:function(){
+          console.log("before mount...")
+        },
+        mounted:function(){
+          console.log("mounted...")
+        },
+        beforeUpdate:function(){
+          console.log("before update...")
+        },
+        updated:function(){
+          console.log("updated...")
+        },
+        beforeDestroy:function(){
+
+        } 
+    })
+</script>
+
+
+  </body>
+</html>

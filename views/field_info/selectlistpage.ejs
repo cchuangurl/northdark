@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="/javascripts/jquery-3.4.1.js"></script>
+<style type="text/css">
+body {
+  background-color: #d6d6d3;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+     flex-direction:column;
+	 justify-content: flex-start;
+     align-items:center;
+  	margin: 0;
+}
+.navbar{background:#f97300;}
+.nav-link, .navbar-brand{color: #f4f4f4;cursor:pointer;}
+.nav-link{margin-right:1em !important;}
+.nav-link:hover{background: #f4f4f4;color:#f97300;}
+.navbar-collapse{justify-content:flex-end;}
+.navbar-toggler{background:#fff !important;}
+</style>
+
+  <title>選取欄位之資料內容</title>
+  </head>
+  <body>
+    <div id="show_div">
+      <bander></bander>
+        <!-- <inputer></inputer> -->
+        <outputer></outputer>
+    </div>
+ 
+    <template id="banderUI">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">{{brand}}</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/">{{home}} <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">{{often1}}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">{{often2}}</a>
+            </li>
+          </ul>
+          <span class="navbar-text">
+            {{statusreport}}
+          </span>
+        </div>
+      </nav>
+    </template>
+    
+   <!--  <template id="inputerUI">
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{card_title}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+          <form>
+            <div class="form-group">
+              <label for="formGroupExampleInput">Example label</label>
+              <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input">
+            </div>
+            <div class="form-group">
+              <label for="formGroupExampleInput2">Another label</label>
+              <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
+            </div>
+          </form>
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div> 
+      <br> 
+    </template>-->
+
+    <template id="outputerUI">
+      <nav aria-label="...">
+        <ul class="pagination">
+          <li class="page-item disabled">
+            <span class="page-link">Previous</span>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item active">
+            <span class="page-link">
+              2
+              <span class="sr-only">(current)</span>
+            </span>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+        <span><h3>資料批次名稱: {{select_layer_info[0].a10dataset_name}}</h3></span>
+      <table border="1" class="table table-striped">
+          <thead id="layer_info_head" v-for="layer_info of select_layer_info">
+          <tr>{{layer_info.a15data_layer}}</tr>
+          <tr>{{layer_info.a20key_name}}</tr>
+          <tr>{{layer_info.a45unit}}</tr>
+          </thead>
+          <tbody id="field_info_body" v-for="field_info of select_field_info">
+            <tr v-for="content of field_info"><td>{{content}}</td></tr>
+          </tbody>
+      </table>
+    </nav>
+    </template>
+<!-- Vue CDN-->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script>
+Vue.component("bander",{
+    props:{},
+    data(){
+      return {
+        brand:"北冥系統",
+        home:"回主功能選單",
+        often1:"備用頁",
+        often2:"備用頁",
+        often3:"備用頁",
+        statusreport:'<%- JSON.stringify(statusreport) %>'
+      }
+    },
+    methods:{
+
+    },
+    template:"#banderUI"
+  });
+  /* Vue.component("inputer",{
+    props:{},
+    data(){
+      return {
+        card_title:"單筆ＸＸＸ資料輸入處",
+        card_subtitle:"請輸入以下各項資料"
+        
+      } 
+    },
+    methods:{
+
+    },
+    template:"#inputerUI"
+  }); */
+  Vue.component("outputer",{
+    props:{},
+    data(){
+      return{
+        select_layer_info:JSON.parse(decodeURIComponent('<%=select_layer_info%>')),
+        select_field_info:'<%=select_field_info%>'
+      }
+      
+    },
+    /* methods:{
+      editinfo:function(id){
+        axios.get('/api/layer_info/edit/'+id)
+      },
+      fetchdata:function(id){
+        axios.get('/api/filed_info/fetch/',{
+          params:{
+            layer_info_id:id,
+            statusreport:"由已解析資料層清單頁的去取回按鈕進入本頁"
+          }
+        })
+      },
+      seeinfo:function(id){
+        axios.get('/api/layer_info/seeinfo/'+id)
+      },
+      deleteinfo:function(id){
+        axios.get('/api/layer_info/delete/'+id)
+      }
+    }, */
+    template:"#outputerUI"
+  });
+    new Vue({
+        el:'#show_div',
+        data:{
+          testdata:'有執行到此。。。。'
+        },
+        /* computed:{
+
+        },
+        watch:{
+
+        },
+        filters:{
+
+        },
+        mixins:[
+
+        ],
+        template:" ",
+        components:{
+
+        },*/
+        beforeCreate:function(){
+          console.log("before create...")
+        },created:function(){
+          console.log("created...")
+        },
+        beforeMount:function(){
+          console.log("before mount...")
+        },
+        mounted:function(){
+          console.log("mounted...")
+        },
+        beforeUpdate:function(){
+          console.log("before update...")
+        },
+        updated:function(){
+          console.log("updated...")
+        },
+        beforeDestroy:function(){
+
+        } 
+    })
+</script>
+
+
+  </body>
+</html>

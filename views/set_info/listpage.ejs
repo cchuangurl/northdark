@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="/javascripts/jquery-3.4.1.js"></script>
+<style type="text/css">
+body {
+  background-color: #d6d6d3;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+     flex-direction:column;
+	 justify-content: flex-start;
+     align-items:center;
+  	margin: 0;
+}
+.navbar{background:#f97300;}
+.nav-link, .navbar-brand{color: #f4f4f4;cursor:pointer;}
+.nav-link{margin-right:1em !important;}
+.nav-link:hover{background: #f4f4f4;color:#f97300;}
+.navbar-collapse{justify-content:flex-end;}
+.navbar-toggler{background:#fff !important;}
+</style>
+
+  <title>已擷取資料批次清單</title>
+  </head>
+  <body>
+    <div id="show_div">
+      <bander></bander>
+      <outputer ></outputer>       
+    </div>
+ 
+    <template id="banderUI">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">{{brand}}</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/">{{home}}</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/api/set_info/inputpage">{{often1}} <span class="sr-only">(current)</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">{{often2}}</a>
+            </li>
+          </ul>
+          <span class="navbar-text">
+            提示：{{statusreport}}
+          </span>
+        </div>
+      </nav>      
+    </template>
+    
+    <template id="outputerUI">
+      <nav aria-label="...">
+        <ul class="pagination">
+          <li class="page-item disabled">
+            <span class="page-link">Previous</span>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item active">
+            <span class="page-link">
+              2
+              <span class="sr-only">(current)</span>
+            </span>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      <table border="1" class="table table-striped">
+          <thead>
+          <tr>
+              <th>平臺網址及資料組編號</th>
+              <th>擷取筆數</th>
+              <th>跳過之筆數</th>                          
+              <th>查詢條件</th>
+              <th>排序方式</th>
+              <th>資料批次名稱</th>
+            <!-- <th>特別註記</th> -->
+          </tr>
+          </thead>
+          <tbody id="set_infopages">
+            <tr v-for="set_info of set_info_list" :key="set_info._id">              
+                <td>{{set_info.a05web_path}}</td>
+                <td>{{set_info.a10data_volume}}</td>
+                <td>{{set_info.a15skip}}</td>
+                <td>{{set_info.a20filter}}</td>
+                <td>{{set_info.a25order}}</td>
+                <td>{{set_info.a30dataset_name}}</td>
+                
+              <!-- statusreport="由已擷取資料組清單頁進入本頁"> -->
+              <td>
+                  <!-- <form action="/api/layer_info/edit/1" method="get"></form>
+                  <input type="hidden" name="statusreport" value="由已擷取資料組清單頁的編輯按鈕進入本頁">
+                  <input type="submit" value="編輯">
+                  </form> -->
+                </td>
+                <td>
+                  <input type="submit" value="去取回" @click="fetchdata(set_info._id)">
+                  <!-- <form :id="set_info._id" action="/api/layer_info/fetch/id'" method="get">                  
+                  <input type="hidden" name="statusreport" value="由已擷取資料組清單頁的去取回按鈕進入本頁">
+                  <input type="submit" value="去取回">
+                  </form> -->
+                </td>
+                <td>
+                  <input type="submit" value="檢視各欄位說明" @click="seelayer(set_info._id)">
+                </td>
+                <!--<td>
+                    <form action="/api/layer_info/delete/1" method="get"></form>
+                    <input type="hidden" name="statusreport" value="由已擷取資料組清單頁的刪按鈕進入本頁">  
+                  <input type="submit" value="刪除">
+                  </form>
+                </td> -->
+              </tr>
+          </tbody>
+      </table>
+    </nav>
+    </template>
+<!-- Vue CDN-->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="//unpkg.com/axios/dist/axios.js"></script>
+<script>
+axios.defaults.withCredentials=true;
+Vue.component("bander",{
+    //props:{},
+    data(){
+      return {
+        brand:"北冥系統",
+        home:"回主功能選單",
+        often1:"手動新增1筆",
+        often2:"備用頁",
+        often3:"備用頁",
+        statusreport:'<%- JSON.stringify(statusreport) %>'
+      }
+    },
+    /* methods:{
+
+    }, */
+    template:"#banderUI"
+  });
+  
+  Vue.component("outputer",{
+    //props:["set_info_list"],
+    data(){
+      return{
+      set_info_list:JSON.parse(decodeURIComponent('<%=set_info_list%>'))
+      }
+    },
+
+    methods:{
+    /*  editinfo:function(id){
+        axios.get('/api/set_info/edit/'+id)
+      },*/
+      fetchdata:function(id){
+        //$router.push({
+          //path:'/api/layer_info/fetch',
+        /*axios.get('/api/layer_info/fetch',{
+          params:{
+            set_info_id:id,
+            statusreport:"由已擷取資料組清單頁的去取回按鈕進入本頁"
+          }
+        })*/
+        let querytext="?statusreport=由已擷取資料組清單頁的去取回按鈕進入本頁";
+        let apiurl='/api/layer_info/fetch/'+id+querytext;
+        window.location=apiurl;
+      },
+      seelayer:function(id){
+        let querytext="?statusreport=由已擷取資料組清單頁的檢視各欄位說明按鈕進入本頁";
+        let apiurl='/api/layer_info/layerpage/'+id+querytext;
+        window.location=apiurl;
+      },         
+      /*seeinfo:function(id){
+        axios.get('/api/set_info/seeinfo/'+id)
+      },
+      deleteinfo:function(id){
+        axios.get('/api/set_info/delete/'+id)
+      }*/
+    },//EOF method 
+    template:"#outputerUI"
+  });
+    new Vue({
+        el:'#show_div',
+        data:{
+          testdata:'有執行到此。。。。',
+          //set_info_list0:[]
+        },
+        /* computed:{
+
+        },
+        watch:{
+
+        },
+        filters:{
+
+        },
+        mixins:[
+
+        ],
+        template:" ",
+        components:{
+
+        },
+        beforeCreate:function(){
+          console.log("before create...")
+        },
+        created:function(){
+          that=this;
+          axios.get("/api/set_info").then(function(res){
+            that.set_info_list0=res.set_info_list;
+            console.log("response accepted!")
+          }) 
+          console.log("created...")
+        },*/
+        beforeMount:function(){
+          console.log("before mount...")
+        },
+        mounted:function(){
+          console.log("mounted...")
+        },
+        beforeUpdate:function(){
+          console.log("before update...")
+        },
+        updated:function(){
+          console.log("updated...")
+        },
+        beforeDestroy:function(){
+
+        } 
+    })
+</script>
+
+
+  </body>
+</html>
