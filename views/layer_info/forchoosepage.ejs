@@ -29,7 +29,7 @@ body {
   <body>
     <div id="show_div">
       <bander></bander>
-        <!-- <inputer></inputer> -->
+        <inputer></inputer>
         <outputer></outputer>
     </div>
  
@@ -98,7 +98,7 @@ body {
             <a class="page-link" href="#">Next</a>
           </li>
         </ul>
-     <span><h3>資料批次名稱: {{layer_info_list[0].a10dataset_name}}</h3></span>
+     <span><h4>資料批次名稱: {{layer_info_list[0].a10dataset_name}}</h4></span>
       <table border="1" class="table table-striped">
           <thead>
           <tr>
@@ -118,7 +118,7 @@ body {
               <td>{{layer_info.a25no_subkey}}</td>
               <td>{{layer_info.a45unit}}</td>
               <td>
-                <input type="checkbox" class="form-control" id="formGroupExampleInput1" value="layer_info._id　v:model="chosen_ids">                
+                <input type="checkbox" class="form-control" id="formGroupExampleInput1" :value="layer_info._id"　v-model:checked="chosen_ids" >                
               </td>
             </tr>
             <tr>
@@ -126,7 +126,7 @@ body {
               <td></td>
               <td></td>
               <td></td>
-              <td>{{outcome}}</td>
+              <td></td>
               <td>
                 <input type="submit" value="選擇確定" @click="sendchosen()">
                 <!-- <form action="/api/layer_info/addunit" method="get"></form>
@@ -159,15 +159,15 @@ body {
             <a class="page-link" href="#">Next</a>
           </li>
         </ul>
-        <span><h3>資料批次名稱: {{select_layer_info[0].a10dataset_name}}</h3></span>
+          <span><h3>處理結果：{{outcome}}</h3></span>
+          <span><h3>資料批次名稱: {{select_layer_info[0].a10dataset_name}}</h3></span>
       <table border="1" class="table table-striped">
-          <thead id="layer_info_head" v-for="layer_info of select_layer_info">
-          <tr>{{layer_info.a15data_layer}}</tr>
-          <tr>{{layer_info.a20key_name}}</tr>
-          <tr>{{layer_info.a45unit}}</tr>
+          <thead id="layer_info_head">
+            <tr ><td width="120px" v-for="layer_info of select_layer_info">{{layer_info.a20key_name}}</td></tr>
+            <tr ><td width="120px" v-for="layer_info of select_layer_info">{{layer_info.a45unit}}</td></tr>
           </thead>
-          <tbody id="field_info_body" v-for="field_info of select_field_info">
-            <tr v-for="content of field_info"><td>{{content}}</td></tr>
+          <tbody id="field_info_body">
+            <tr v-for="field_info of select_field_info"><td width="120px" v-for="content of field_info">{{content}}</td></tr>
           </tbody>
       </table>
     </nav>
@@ -179,6 +179,9 @@ body {
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdn.bootcss.com/qs/6.5.1/qs.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vuex/3.0.1/vues.js"></script>
+<script src="https://cdn.bootcss.com/vuex/3.0.1/vues.min.js"></script> -->
+<script src="https://unpkg.com/vuex/dist/vuex.js"></script>
 <script>
 Vue.component("bander",{
     props:{},
@@ -208,48 +211,92 @@ Vue.component("bander",{
       
     },
     methods:{
+      /* update(event){
+        let checked=event.target.checked;
+        let value=event.target.value;
+        if(checked){
+          this.chosen_ids.push(value)
+        }
+      }, */
       sendchosen:function(){
         /* for(let layer_info of this.layer_info_list){          
           console.log("the added unit for "+layer_info.a20key_name+" is:"+layer_info.a45unit)
         } */
-        const apiurl='/api/field_info/getchosen';
-        let data={
+        let postdata={
           statusreport:"由各欄位勾選清單進入本頁",
           set_info_ids:this.layer_info_list[0].a05set_info_ids,
           chosen_ids:this.chosen_ids
         };
-        //let data=Qs.stringify(testdata2);
-        axios.post(apiurl,data).then((resByapi)=>{
-          let outcome=resByapi.data.outcome;
-          raw_layer_info=resByapi.data.select_layer_info;
-          select_field_info=resByapi.data.select_field_info;
-          //select_layer_info=JSON.parse(decodeURIComponent(raw_layer_info)
-          select_field_info=raw_layer_info
-        });
+        this.$store.commit("getapi",postdata)        
       }//EOF sendunit
     },//EOF methods
     template:"#inputerUI"
-  });
+  });;//EOF component inputer
+
   Vue.component("outputer",{
     props:{},
-    data(){
+    /* data(){
       return{
         select_layer_info:[],
         select_field_info:[],
         outcome:""
       }
       
+    }, */
+    computed:{
+      outcome(){
+        return this.$store.getters.outcome    
+      },
+      select_field_info(){
+        return this.$store.getters.field
+      },
+      select_layer_info(){
+        return this.$store.getters.layer
+      }
     },
     template:"#outputerUI"
-  });
+  });//EOF component Outputer
 
-
+  const store=new Vuex.Store({
+      state:{
+        outcome:"",
+        select_field_info:[],
+        select_layer_info:[]
+      },
+      getters:{
+        outcome(state){
+          return state.outcome
+        },
+        field(state){
+          return state.select_field_info
+        },
+        layer(state){
+          return state.select_layer_info
+        }
+      },
+      mutations:{
+        getapi(state,postdata){
+          const apiurl='/api/field_info/getchosen';
+          
+        //let data=Qs.stringify(testdata2);
+          axios.post(apiurl,postdata).then((resByapi)=>{
+          state.outcome=resByapi.data.outcome;
+          console.log(state.outcome);
+          let raw_layer_info=resByapi.data.select_layer_info;
+          state.select_field_info=resByapi.data.select_field_info;
+          //select_layer_info=JSON.parse(decodeURIComponent(raw_layer_info)
+          state.select_layer_info=raw_layer_info        
+      });
+      }
+    }//EOF mutations
+  });//EOF Vues.Store
 
     new Vue({
         el:'#show_div',
         data:{
           testdata:'有執行到此。。。。'
         },
+        store,
         /* computed:{
 
         },

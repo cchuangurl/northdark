@@ -61,17 +61,18 @@ module.exports = {
         console.log("executing getcontent()....");
         console.log("req.body.statusreport:"+req.body.statusreport);
         let set_info_ids=req.body.set_info_ids;
-        console.log("recepted set_info:"+set_info);
+        console.log("recepted set_info_ids:"+set_info_ids);
         let chosen_ids=req.body.chosen_ids;
-        console.log("recepted chosen_ids0:"+chosen_ids[0]);
+        console.log("recepted chosen_ids:"+chosen_ids);
         let select_layer_info=new Array();
         let select_field_info;
-        let promise0=((chosen_ids)=>{
+        let promise0=((set_info_ids)=>{
             return new Promise((resolve,reject)=>{
             Layer_info.find({a05set_info_ids:set_info_ids},function(err,layer_info_list){
                 for(let info of layer_info_list){
                     for(let ids of chosen_ids){
                     if(info._id.toString()===ids.toString()){
+                        console.log("selected layer: "+info.a20key_name)
                         select_layer_info.push(info)
                     }
                 }
@@ -91,39 +92,38 @@ module.exports = {
                     }
                     let m=0,n=0;
                     for(let field_info of field_info_list){
-                        for(let info of seclect_layer_info){
+                        for(let info of select_layer_info){
                             for(let key in field_info){
-                                if(field_info.a50field_name===key){
-                                    select_field[m][n]=field_info.key;
+                                if(info.a50field_name===key){
+                                    select_field[m][n]=field_info[key];
                                     n=n+1
                                 }
                         }
                     }
                     m=m+1
                     }
-                    let first20_info=select_field_info.slice(20);
+                    console.log("caugth n: "+n);                    
+                    let first20_info=select_field_info.slice(0,20);
+                    let outcome="取得所選欄位內容成功！";
+                    console.log("the no of first20: "+first20_info.length);
+                    console.log("the no of eack field_info: "+first20_info[0].length);
+                    console.log("content of 1st conten of 1st ingo: "+first20_info[0][0]);
                     res.send({
                         select_layer_info,
                         select_field_info:first20_info,
-                        outcome:"取得所選欄位內容成功！"
+                        outcome
                     })
                 })       
             resolve()
             })//EOF return Promise
         });//EOF promise1
-
-        
-            
-             for(let id of chosen_ids){
-                for(let field_info of field_info_list){
-
-             }
-            }
-
-        
-
-
-
+        promise0(set_info_ids)
+        .then((select_layer_info)=>{
+            return promise1(select_layer_info)
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
     },//EOF getcontent
 
     //更新

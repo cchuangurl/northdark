@@ -592,9 +592,13 @@ module.exports = {
         })
         .then((arraylist)=>{
             let sequence=Promise.resolve();
-            arraylist[0].forEach(function(layer_info){                               
+            let t=0;
+            arraylist[0].forEach(function(layer_info){
+                t=t+1;                               
             sequence=sequence.then(()=>{
                 //console.log("layer info within sequence!"+layer_info)
+                let field_name="a"+(10+t*2)+"content";
+                layer_info.a50field_name=field_name;
                     return  promise2(layer_info)
                 })//EOF sequence then
                 .catch(err=>{

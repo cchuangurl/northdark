@@ -9,6 +9,7 @@ router.get('/', function(req, res, next) {
 
 //本router，導到依所選layer_info_ids挑出欄位資料
 router.post('/getchosen', function(req, res, next) {
+	console.log("executing router /getchosen...");
 	field_infoController.getcontent(req,res);	
 });
 
